@@ -2,13 +2,19 @@
 
 	#include <iostream>
 	#include <string>
+	#include <stack>
+	#include "symbol_table.hpp"
+
 	using namespace std;
 
 	extern FILE * yyin;
 
 	int yylex();
-	int yyerror(char *);
-
+	int yyerror(string s);
+	
+	stack <Env *> symref;
+	Env *top = new Env(NULL);
+	attr *a;
 %}
 
 %union {
@@ -17,151 +23,170 @@
 	char text[20];
 }
 
+%nonassoc NO_ELSE
+%nonassoc ELSE
+
 %token INIT
-%token ID
 %token INT FLOAT VOID
 %token INTCONST FLOATCONST
+%token ID
 %token COMMA SCOL
 %token IF ELSE
 %token LOOP
 %token BREAK
 %token RETURN
 %token ASSGN
-%token ADD SUB MUL DIV
+%token PLUS MINUS MUL DIV
 %token LES LEQ GRE GEQ EQL NEQ
+%token AND OR NOT
 %token LSBR RSBR
 %token LPBR RPBR
 %token LFBR RFBR
 %token ERR
 
+%type <text> ID
+%type <text> type
+%type <text> INT
+%type <text> FLOAT
+%type <ival> INTCONST
+
 %%
 
-program			:	declaration_list init_block
-				{cout<<"input accepted"<<endl;}
-			;
+start		:	program	{cout<<endl;};
 
-init_block		:	INIT compound_statement
-			;
+program		:	globaldecls init;
 
-declaration_list	:	declaration_list declaration
+globaldecls	:	globaldecls globaldecl
+			|;
+
+globaldecl	:	vardecl
+			|funcdecl;
+
+vardecls	:	vardecls vardecl
+			|;
+
+vardecl		:	type ID SCOL
+			{a = new attr();
+			string s($1);
+			a->type = s;
+			top->put($2, a);}
+
 			|
+
+			type ID LPBR INTCONST RPBR SCOL
+			{a = new attr();
+			string s($1);
+			a->type = s;
+			top->put($2, a);};
+
+funcdecl	:	type ID LPBR params RPBR block
+			{a = new attr();
+			string s($1);
+			a->type = s;
+			top->put($2, a);};
+
+block		:	LFBR
+			{symref.push(top);
+			top = new Env(top);
+			cout<<"{";}
+			vardecls
+			stmts
+			RFBR
+			{top = symref.top();
+			symref.pop();
+			cout<<"}";};
+
+init		:	INIT block;
+
+params		:	paramlist
+			|;
+
+paramlist	:	paramlist COMMA param
+			|param;
+
+param		:	type ID
+			{a = new attr();
+			string s($1);
+			a->type = s;
+			top->put($2, a);}
+			|type ID LSBR RSBR;
+
+stmts		:	stmts stmt
+			|;
+
+stmt		:	loc ASSGN bool SCOL
+			|IF LPBR bool RPBR stmt %prec NO_ELSE
+			|IF LPBR bool RPBR stmt ELSE stmt
+			|LOOP LPBR bool RPBR stmt
+			|ID LPBR args RPBR SCOL			
+			{a = top->get($1);
+			cout<<$1<<":"<<a->type<<endl;}
+			|BREAK SCOL
+			|block;
+
+args		:	arglist
+			|;
+
+arglist		:	arglist COMMA arg
+			|arg;
+
+arg		:	factor;
+
+type		:	INT|FLOAT;
+
+loc		:	loc LSBR bool RSBR
+			|ID
+			{a = top->get($1);
+			cout<<$1<<":"<<a->type<<endl;}
+;
+
+bool		:	bool OR join
+			|join;
+
+join		:	join AND equality
+			|equality;
+
+equality	:	equality EQL rel
+			|equality NEQ rel
+			|rel;
+
+rel		:	expr LES expr
+			|expr LEQ expr
+			|expr GEQ expr
+			|expr GRE expr
+			|expr;
+
+expr		:	expr PLUS term
+			|expr MINUS term
+			|term;
+
+term		:	term MUL unary
+			|term DIV unary
+			|unary;
+
+unary		:	NOT unary
+			|MINUS unary|factor;
+
+factor		:	LPBR bool RPBR
+			|loc
+			|INTCONST
+			|FLOATCONST
 			;
 
-declaration 		:	var_declaration
-			| 	func_declaration
-			;
+// block
 
-var_declaration 	:	type_specifier ID SCOL
-			|	type_specifier ID LSBR INTCONST RSBR SCOL
-			;
+// declarations
 
-type_specifier		:	INT | FLOAT | VOID
-			;
+// if-else
 
-func_declaration	:	type_specifier ID LPBR params RPBR compound_statement
-			;
+// while
 
-params			:	param_list
-			|
-			;
+// expressions
 
-param_list		:	param_list COMMA param
-			|	param
-			;
+// statements
 
-param			:	type_specifier ID
-			|	type_specifier ID LSBR RSBR
-			;
+// functions
 
-compound_statement	:	LFBR local_declarations statement_list RFBR
-			;
-
-local_declarations	:	local_declarations var_declaration 
-			|
-			;
-
-statement_list		:	statement_list statement
-			|
-			;
-
-statement		:	expression_statement
-			|	compound_statement
-			|	selection_statement
-			|	iteration_statement
-			|	break_statement
-			|	return_statement
-			;
-
-expression_statement	:	expression SCOL
-			|	SCOL
-			;
-
-selection_statement	:	simple_selection
-			|	simple_selection ELSE compound_statement
-			;
-
-simple_selection	:	IF LPBR expression RPBR compound_statement
-			|	simple_selection ELSE IF LPBR expression RPBR compound_statement
-			;
-
-iteration_statement	:	LOOP LPBR expression RPBR statement
-			;
-
-break_statement		:	BREAK SCOL
-			;
-
-return_statement	:	RETURN SCOL
-			|	RETURN expression SCOL
-			;
-
-expression		:	var ASSGN expression
-			|	simple_expression
-			;
-
-var			:	ID
-			|	ID LSBR expression RSBR
-			;
-
-simple_expression	:	additive_expression relop additive_expression
-			|	additive_expression
-			;
-
-relop			:	LES | LEQ | GRE | GEQ | EQL | NEQ
-			;
-
-additive_expression	:	additive_expression addop term
-			|	term
-			;
-
-addop			:	ADD
-			|	SUB
-			;
-
-term			:	term mulop factor
-			|	factor
-			;
-
-mulop			:	MUL
-			|	DIV
-			;
-
-factor			:	LPBR expression RPBR
-			|	var
-			|	func_call
-			|	INTCONST
-			|	FLOATCONST
-			;
-
-func_call		:	ID LPBR args RPBR
-			;
-
-args			:	arg_list
-			|
-			;
-
-arg_list		:	arg_list COMMA expression
-			|	expression
-			;
 
 %%
 
@@ -177,7 +202,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int yyerror(char *s){
+int yyerror(string s){
 	cout<<"Error: "<<s<<endl;
 	return 0;
 }

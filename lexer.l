@@ -5,13 +5,13 @@
 
 alpha	[a-zA-Z]
 digit	[0-9]
-digits	digit+
+digits	{digit}+
 
 %%
 
 "init"				{return INIT;}
-"int"				{return INT;}
-"float"				{return FLOAT;}
+"int"				{strcpy(yylval.text,yytext); return INT;}
+"float"				{strcpy(yylval.text,yytext); return FLOAT;}
 "void"				{return VOID;}
 ","				{return COMMA;}
 ";"				{return SCOL;}
@@ -21,8 +21,8 @@ digits	digit+
 "break"				{return BREAK;}
 "return"			{return RETURN;}
 "="				{return ASSGN;}
-"+"				{return ADD;}
-"-"				{return SUB;}
+"+"				{return PLUS;}
+"-"				{return MINUS;}
 "*"				{return MUL;}
 "/"				{return DIV;}
 "<"				{return LES;}
@@ -31,15 +31,18 @@ digits	digit+
 ">="				{return GEQ;}
 "=="				{return EQL;}
 "!="				{return NEQ;}
+"&&"				{return AND;}
+"||"				{return OR;}
+"!"				{return NOT;}
 "["				{return LSBR;}
 "]"				{return RSBR;}
 "("				{return LPBR;}
 ")"				{return RPBR;}
 "{"				{return LFBR;}
 "}"				{return RFBR;}
-("+"|"-")?{digits}		{yylval.ival = atoi(yytext); return INTCONST;}
-("+"|"-")?{digits}.{digits}	{yylval.fval = atof(yytext); return FLOATCONST;}
 {alpha}({alpha}|{digit})*	{strcpy(yylval.text,yytext); return ID;}
+("+"|"-")?{digits}		{yylval.ival = atoi(yytext); return INTCONST;}
+("+"|"-")?{digits}"."{digits}	{yylval.fval = atof(yytext); return FLOATCONST;}
 [ \t\n]				;
 "$"				{return 0;}
 .  				{return ERR;}

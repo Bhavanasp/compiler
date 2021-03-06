@@ -1,2 +1,20 @@
+float x;
+
+float func(int a, int b){
+	x = a+b;
+}
+
 init{
+	int x;
+	int y;
+	if(x>y){
+		float x;
+		if(x==1){
+			x = 1;
+			y = 2;
+		}
+	}
+	x = 100;
+	y = 200;
+	func(x,y);
 }
