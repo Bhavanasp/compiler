@@ -1,0 +1,1454 @@
+Terminals unused in grammar
+
+   VOID
+   ERR
+
+
+Grammar
+
+    0 $accept: start $end
+
+    1 start: program
+
+    2 program: globaldecls init
+
+    3 globaldecls: globaldecls globaldecl
+    4            | %empty
+
+    5 globaldecl: vardecl
+    6           | funcdecl
+
+    7 vardecls: vardecls vardecl
+    8         | %empty
+
+    9 vardecl: type ID SCOL
+   10        | type ID LSBR INTCONST RSBR SCOL
+
+   11 funcdecl: type ID LPBR params RPBR block
+
+   12 $@1: %empty
+
+   13 block: LFBR $@1 vardecls stmts RFBR
+
+   14 init: INIT block
+
+   15 params: paramlist
+   16       | %empty
+
+   17 paramlist: paramlist COMMA param
+   18          | param
+
+   19 param: type ID
+   20      | type ID LSBR RSBR
+
+   21 stmts: stmts stmt
+   22      | %empty
+
+   23 stmt: loc ASSGN bool SCOL
+   24     | IF LPBR bool RPBR stmt
+   25     | IF LPBR bool RPBR stmt ELSE stmt
+   26     | LOOP LPBR bool RPBR stmt
+   27     | BREAK SCOL
+   28     | RETURN factor SCOL
+   29     | block
+
+   30 args: arglist
+   31     | %empty
+
+   32 arglist: arglist COMMA arg
+   33        | arg
+
+   34 arg: factor
+
+   35 type: INT
+   36     | FLOAT
+
+   37 loc: loc LSBR bool RSBR
+   38    | ID
+   39    | ID LPBR args RPBR
+
+   40 bool: bool OR join
+   41     | join
+
+   42 join: join AND equality
+   43     | equality
+
+   44 equality: equality EQL rel
+   45         | equality NEQ rel
+   46         | rel
+
+   47 rel: expr LES expr
+   48    | expr LEQ expr
+   49    | expr GEQ expr
+   50    | expr GRE expr
+   51    | expr
+
+   52 expr: expr PLUS term
+   53     | expr MINUS term
+   54     | term
+
+   55 term: term MUL unary
+   56     | term DIV unary
+   57     | unary
+
+   58 unary: NOT unary
+   59      | MINUS unary
+   60      | factor
+
+   61 factor: LPBR bool RPBR
+   62       | loc
+   63       | INTCONST
+   64       | FLOATCONST
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NOELSE (258)
+ELSE (259) 25
+INIT (260) 14
+INT (261) 35
+FLOAT (262) 36
+VOID (263)
+INTCONST (264) 10 63
+FLOATCONST (265) 64
+ID (266) 9 10 11 19 20 38 39
+COMMA (267) 17 32
+SCOL (268) 9 10 23 27 28
+IF (269) 24 25
+LOOP (270) 26
+BREAK (271) 27
+RETURN (272) 28
+ASSGN (273) 23
+PLUS (274) 52
+MINUS (275) 53 59
+MUL (276) 55
+DIV (277) 56
+LES (278) 47
+LEQ (279) 48
+GRE (280) 50
+GEQ (281) 49
+EQL (282) 44
+NEQ (283) 45
+AND (284) 42
+OR (285) 40
+NOT (286) 58
+LSBR (287) 10 20 37
+RSBR (288) 10 20 37
+LPBR (289) 11 24 25 26 39 61
+RPBR (290) 11 24 25 26 39 61
+LFBR (291) 13
+RFBR (292) 13
+ERR (293)
+
+
+Nonterminals, with rules where they appear
+
+$accept (39)
+    on left: 0
+start (40)
+    on left: 1, on right: 0
+program (41)
+    on left: 2, on right: 1
+globaldecls (42)
+    on left: 3 4, on right: 2 3
+globaldecl (43)
+    on left: 5 6, on right: 3
+vardecls (44)
+    on left: 7 8, on right: 7 13
+vardecl (45)
+    on left: 9 10, on right: 5 7
+funcdecl (46)
+    on left: 11, on right: 6
+block (47)
+    on left: 13, on right: 11 14 29
+$@1 (48)
+    on left: 12, on right: 13
+init (49)
+    on left: 14, on right: 2
+params (50)
+    on left: 15 16, on right: 11
+paramlist (51)
+    on left: 17 18, on right: 15 17
+param (52)
+    on left: 19 20, on right: 17 18
+stmts (53)
+    on left: 21 22, on right: 13 21
+stmt (54)
+    on left: 23 24 25 26 27 28 29, on right: 21 24 25 26
+args (55)
+    on left: 30 31, on right: 39
+arglist (56)
+    on left: 32 33, on right: 30 32
+arg (57)
+    on left: 34, on right: 32 33
+type (58)
+    on left: 35 36, on right: 9 10 11 19 20
+loc (59)
+    on left: 37 38 39, on right: 23 37 62
+bool (60)
+    on left: 40 41, on right: 23 24 25 26 37 40 61
+join (61)
+    on left: 42 43, on right: 40 41 42
+equality (62)
+    on left: 44 45 46, on right: 42 43 44 45
+rel (63)
+    on left: 47 48 49 50 51, on right: 44 45 46
+expr (64)
+    on left: 52 53 54, on right: 47 48 49 50 51 52 53
+term (65)
+    on left: 55 56 57, on right: 52 53 54 55 56
+unary (66)
+    on left: 58 59 60, on right: 55 56 57 58 59
+factor (67)
+    on left: 61 62 63 64, on right: 28 34 60
+
+
+State 0
+
+    0 $accept: . start $end
+
+    $default  reduce using rule 4 (globaldecls)
+
+    start        go to state 1
+    program      go to state 2
+    globaldecls  go to state 3
+
+
+State 1
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 4
+
+
+State 2
+
+    1 start: program .
+
+    $default  reduce using rule 1 (start)
+
+
+State 3
+
+    2 program: globaldecls . init
+    3 globaldecls: globaldecls . globaldecl
+
+    INIT   shift, and go to state 5
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
+
+    globaldecl  go to state 8
+    vardecl     go to state 9
+    funcdecl    go to state 10
+    init        go to state 11
+    type        go to state 12
+
+
+State 4
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+State 5
+
+   14 init: INIT . block
+
+    LFBR  shift, and go to state 13
+
+    block  go to state 14
+
+
+State 6
+
+   35 type: INT .
+
+    $default  reduce using rule 35 (type)
+
+
+State 7
+
+   36 type: FLOAT .
+
+    $default  reduce using rule 36 (type)
+
+
+State 8
+
+    3 globaldecls: globaldecls globaldecl .
+
+    $default  reduce using rule 3 (globaldecls)
+
+
+State 9
+
+    5 globaldecl: vardecl .
+
+    $default  reduce using rule 5 (globaldecl)
+
+
+State 10
+
+    6 globaldecl: funcdecl .
+
+    $default  reduce using rule 6 (globaldecl)
+
+
+State 11
+
+    2 program: globaldecls init .
+
+    $default  reduce using rule 2 (program)
+
+
+State 12
+
+    9 vardecl: type . ID SCOL
+   10        | type . ID LSBR INTCONST RSBR SCOL
+   11 funcdecl: type . ID LPBR params RPBR block
+
+    ID  shift, and go to state 15
+
+
+State 13
+
+   13 block: LFBR . $@1 vardecls stmts RFBR
+
+    $default  reduce using rule 12 ($@1)
+
+    $@1  go to state 16
+
+
+State 14
+
+   14 init: INIT block .
+
+    $default  reduce using rule 14 (init)
+
+
+State 15
+
+    9 vardecl: type ID . SCOL
+   10        | type ID . LSBR INTCONST RSBR SCOL
+   11 funcdecl: type ID . LPBR params RPBR block
+
+    SCOL  shift, and go to state 17
+    LSBR  shift, and go to state 18
+    LPBR  shift, and go to state 19
+
+
+State 16
+
+   13 block: LFBR $@1 . vardecls stmts RFBR
+
+    $default  reduce using rule 8 (vardecls)
+
+    vardecls  go to state 20
+
+
+State 17
+
+    9 vardecl: type ID SCOL .
+
+    $default  reduce using rule 9 (vardecl)
+
+
+State 18
+
+   10 vardecl: type ID LSBR . INTCONST RSBR SCOL
+
+    INTCONST  shift, and go to state 21
+
+
+State 19
+
+   11 funcdecl: type ID LPBR . params RPBR block
+
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
+
+    $default  reduce using rule 16 (params)
+
+    params     go to state 22
+    paramlist  go to state 23
+    param      go to state 24
+    type       go to state 25
+
+
+State 20
+
+    7 vardecls: vardecls . vardecl
+   13 block: LFBR $@1 vardecls . stmts RFBR
+
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
+
+    $default  reduce using rule 22 (stmts)
+
+    vardecl  go to state 26
+    stmts    go to state 27
+    type     go to state 28
+
+
+State 21
+
+   10 vardecl: type ID LSBR INTCONST . RSBR SCOL
+
+    RSBR  shift, and go to state 29
+
+
+State 22
+
+   11 funcdecl: type ID LPBR params . RPBR block
+
+    RPBR  shift, and go to state 30
+
+
+State 23
+
+   15 params: paramlist .
+   17 paramlist: paramlist . COMMA param
+
+    COMMA  shift, and go to state 31
+
+    $default  reduce using rule 15 (params)
+
+
+State 24
+
+   18 paramlist: param .
+
+    $default  reduce using rule 18 (paramlist)
+
+
+State 25
+
+   19 param: type . ID
+   20      | type . ID LSBR RSBR
+
+    ID  shift, and go to state 32
+
+
+State 26
+
+    7 vardecls: vardecls vardecl .
+
+    $default  reduce using rule 7 (vardecls)
+
+
+State 27
+
+   13 block: LFBR $@1 vardecls stmts . RFBR
+   21 stmts: stmts . stmt
+
+    ID      shift, and go to state 33
+    IF      shift, and go to state 34
+    LOOP    shift, and go to state 35
+    BREAK   shift, and go to state 36
+    RETURN  shift, and go to state 37
+    LFBR    shift, and go to state 13
+    RFBR    shift, and go to state 38
+
+    block  go to state 39
+    stmt   go to state 40
+    loc    go to state 41
+
+
+State 28
+
+    9 vardecl: type . ID SCOL
+   10        | type . ID LSBR INTCONST RSBR SCOL
+
+    ID  shift, and go to state 42
+
+
+State 29
+
+   10 vardecl: type ID LSBR INTCONST RSBR . SCOL
+
+    SCOL  shift, and go to state 43
+
+
+State 30
+
+   11 funcdecl: type ID LPBR params RPBR . block
+
+    LFBR  shift, and go to state 13
+
+    block  go to state 44
+
+
+State 31
+
+   17 paramlist: paramlist COMMA . param
+
+    INT    shift, and go to state 6
+    FLOAT  shift, and go to state 7
+
+    param  go to state 45
+    type   go to state 25
+
+
+State 32
+
+   19 param: type ID .
+   20      | type ID . LSBR RSBR
+
+    LSBR  shift, and go to state 46
+
+    $default  reduce using rule 19 (param)
+
+
+State 33
+
+   38 loc: ID .
+   39    | ID . LPBR args RPBR
+
+    LPBR  shift, and go to state 47
+
+    $default  reduce using rule 38 (loc)
+
+
+State 34
+
+   24 stmt: IF . LPBR bool RPBR stmt
+   25     | IF . LPBR bool RPBR stmt ELSE stmt
+
+    LPBR  shift, and go to state 48
+
+
+State 35
+
+   26 stmt: LOOP . LPBR bool RPBR stmt
+
+    LPBR  shift, and go to state 49
+
+
+State 36
+
+   27 stmt: BREAK . SCOL
+
+    SCOL  shift, and go to state 50
+
+
+State 37
+
+   28 stmt: RETURN . factor SCOL
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    factor  go to state 55
+
+
+State 38
+
+   13 block: LFBR $@1 vardecls stmts RFBR .
+
+    $default  reduce using rule 13 (block)
+
+
+State 39
+
+   29 stmt: block .
+
+    $default  reduce using rule 29 (stmt)
+
+
+State 40
+
+   21 stmts: stmts stmt .
+
+    $default  reduce using rule 21 (stmts)
+
+
+State 41
+
+   23 stmt: loc . ASSGN bool SCOL
+   37 loc: loc . LSBR bool RSBR
+
+    ASSGN  shift, and go to state 56
+    LSBR   shift, and go to state 57
+
+
+State 42
+
+    9 vardecl: type ID . SCOL
+   10        | type ID . LSBR INTCONST RSBR SCOL
+
+    SCOL  shift, and go to state 17
+    LSBR  shift, and go to state 18
+
+
+State 43
+
+   10 vardecl: type ID LSBR INTCONST RSBR SCOL .
+
+    $default  reduce using rule 10 (vardecl)
+
+
+State 44
+
+   11 funcdecl: type ID LPBR params RPBR block .
+
+    $default  reduce using rule 11 (funcdecl)
+
+
+State 45
+
+   17 paramlist: paramlist COMMA param .
+
+    $default  reduce using rule 17 (paramlist)
+
+
+State 46
+
+   20 param: type ID LSBR . RSBR
+
+    RSBR  shift, and go to state 58
+
+
+State 47
+
+   39 loc: ID LPBR . args RPBR
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    LPBR        shift, and go to state 53
+
+    $default  reduce using rule 31 (args)
+
+    args     go to state 59
+    arglist  go to state 60
+    arg      go to state 61
+    loc      go to state 54
+    factor   go to state 62
+
+
+State 48
+
+   24 stmt: IF LPBR . bool RPBR stmt
+   25     | IF LPBR . bool RPBR stmt ELSE stmt
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    bool      go to state 65
+    join      go to state 66
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 49
+
+   26 stmt: LOOP LPBR . bool RPBR stmt
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    bool      go to state 73
+    join      go to state 66
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 50
+
+   27 stmt: BREAK SCOL .
+
+    $default  reduce using rule 27 (stmt)
+
+
+State 51
+
+   63 factor: INTCONST .
+
+    $default  reduce using rule 63 (factor)
+
+
+State 52
+
+   64 factor: FLOATCONST .
+
+    $default  reduce using rule 64 (factor)
+
+
+State 53
+
+   61 factor: LPBR . bool RPBR
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    bool      go to state 74
+    join      go to state 66
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 54
+
+   37 loc: loc . LSBR bool RSBR
+   62 factor: loc .
+
+    LSBR  shift, and go to state 57
+
+    $default  reduce using rule 62 (factor)
+
+
+State 55
+
+   28 stmt: RETURN factor . SCOL
+
+    SCOL  shift, and go to state 75
+
+
+State 56
+
+   23 stmt: loc ASSGN . bool SCOL
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    bool      go to state 76
+    join      go to state 66
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 57
+
+   37 loc: loc LSBR . bool RSBR
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    bool      go to state 77
+    join      go to state 66
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 58
+
+   20 param: type ID LSBR RSBR .
+
+    $default  reduce using rule 20 (param)
+
+
+State 59
+
+   39 loc: ID LPBR args . RPBR
+
+    RPBR  shift, and go to state 78
+
+
+State 60
+
+   30 args: arglist .
+   32 arglist: arglist . COMMA arg
+
+    COMMA  shift, and go to state 79
+
+    $default  reduce using rule 30 (args)
+
+
+State 61
+
+   33 arglist: arg .
+
+    $default  reduce using rule 33 (arglist)
+
+
+State 62
+
+   34 arg: factor .
+
+    $default  reduce using rule 34 (arg)
+
+
+State 63
+
+   59 unary: MINUS . unary
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    unary   go to state 80
+    factor  go to state 72
+
+
+State 64
+
+   58 unary: NOT . unary
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    unary   go to state 81
+    factor  go to state 72
+
+
+State 65
+
+   24 stmt: IF LPBR bool . RPBR stmt
+   25     | IF LPBR bool . RPBR stmt ELSE stmt
+   40 bool: bool . OR join
+
+    OR    shift, and go to state 82
+    RPBR  shift, and go to state 83
+
+
+State 66
+
+   41 bool: join .
+   42 join: join . AND equality
+
+    AND  shift, and go to state 84
+
+    $default  reduce using rule 41 (bool)
+
+
+State 67
+
+   43 join: equality .
+   44 equality: equality . EQL rel
+   45         | equality . NEQ rel
+
+    EQL  shift, and go to state 85
+    NEQ  shift, and go to state 86
+
+    $default  reduce using rule 43 (join)
+
+
+State 68
+
+   46 equality: rel .
+
+    $default  reduce using rule 46 (equality)
+
+
+State 69
+
+   47 rel: expr . LES expr
+   48    | expr . LEQ expr
+   49    | expr . GEQ expr
+   50    | expr . GRE expr
+   51    | expr .
+   52 expr: expr . PLUS term
+   53     | expr . MINUS term
+
+    PLUS   shift, and go to state 87
+    MINUS  shift, and go to state 88
+    LES    shift, and go to state 89
+    LEQ    shift, and go to state 90
+    GRE    shift, and go to state 91
+    GEQ    shift, and go to state 92
+
+    $default  reduce using rule 51 (rel)
+
+
+State 70
+
+   54 expr: term .
+   55 term: term . MUL unary
+   56     | term . DIV unary
+
+    MUL  shift, and go to state 93
+    DIV  shift, and go to state 94
+
+    $default  reduce using rule 54 (expr)
+
+
+State 71
+
+   57 term: unary .
+
+    $default  reduce using rule 57 (term)
+
+
+State 72
+
+   60 unary: factor .
+
+    $default  reduce using rule 60 (unary)
+
+
+State 73
+
+   26 stmt: LOOP LPBR bool . RPBR stmt
+   40 bool: bool . OR join
+
+    OR    shift, and go to state 82
+    RPBR  shift, and go to state 95
+
+
+State 74
+
+   40 bool: bool . OR join
+   61 factor: LPBR bool . RPBR
+
+    OR    shift, and go to state 82
+    RPBR  shift, and go to state 96
+
+
+State 75
+
+   28 stmt: RETURN factor SCOL .
+
+    $default  reduce using rule 28 (stmt)
+
+
+State 76
+
+   23 stmt: loc ASSGN bool . SCOL
+   40 bool: bool . OR join
+
+    SCOL  shift, and go to state 97
+    OR    shift, and go to state 82
+
+
+State 77
+
+   37 loc: loc LSBR bool . RSBR
+   40 bool: bool . OR join
+
+    OR    shift, and go to state 82
+    RSBR  shift, and go to state 98
+
+
+State 78
+
+   39 loc: ID LPBR args RPBR .
+
+    $default  reduce using rule 39 (loc)
+
+
+State 79
+
+   32 arglist: arglist COMMA . arg
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    LPBR        shift, and go to state 53
+
+    arg     go to state 99
+    loc     go to state 54
+    factor  go to state 62
+
+
+State 80
+
+   59 unary: MINUS unary .
+
+    $default  reduce using rule 59 (unary)
+
+
+State 81
+
+   58 unary: NOT unary .
+
+    $default  reduce using rule 58 (unary)
+
+
+State 82
+
+   40 bool: bool OR . join
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    join      go to state 100
+    equality  go to state 67
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 83
+
+   24 stmt: IF LPBR bool RPBR . stmt
+   25     | IF LPBR bool RPBR . stmt ELSE stmt
+
+    ID      shift, and go to state 33
+    IF      shift, and go to state 34
+    LOOP    shift, and go to state 35
+    BREAK   shift, and go to state 36
+    RETURN  shift, and go to state 37
+    LFBR    shift, and go to state 13
+
+    block  go to state 39
+    stmt   go to state 101
+    loc    go to state 41
+
+
+State 84
+
+   42 join: join AND . equality
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc       go to state 54
+    equality  go to state 102
+    rel       go to state 68
+    expr      go to state 69
+    term      go to state 70
+    unary     go to state 71
+    factor    go to state 72
+
+
+State 85
+
+   44 equality: equality EQL . rel
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    rel     go to state 103
+    expr    go to state 69
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 86
+
+   45 equality: equality NEQ . rel
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    rel     go to state 104
+    expr    go to state 69
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 87
+
+   52 expr: expr PLUS . term
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    term    go to state 105
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 88
+
+   53 expr: expr MINUS . term
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    term    go to state 106
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 89
+
+   47 rel: expr LES . expr
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    expr    go to state 107
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 90
+
+   48 rel: expr LEQ . expr
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    expr    go to state 108
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 91
+
+   50 rel: expr GRE . expr
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    expr    go to state 109
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 92
+
+   49 rel: expr GEQ . expr
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    expr    go to state 110
+    term    go to state 70
+    unary   go to state 71
+    factor  go to state 72
+
+
+State 93
+
+   55 term: term MUL . unary
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    unary   go to state 111
+    factor  go to state 72
+
+
+State 94
+
+   56 term: term DIV . unary
+
+    INTCONST    shift, and go to state 51
+    FLOATCONST  shift, and go to state 52
+    ID          shift, and go to state 33
+    MINUS       shift, and go to state 63
+    NOT         shift, and go to state 64
+    LPBR        shift, and go to state 53
+
+    loc     go to state 54
+    unary   go to state 112
+    factor  go to state 72
+
+
+State 95
+
+   26 stmt: LOOP LPBR bool RPBR . stmt
+
+    ID      shift, and go to state 33
+    IF      shift, and go to state 34
+    LOOP    shift, and go to state 35
+    BREAK   shift, and go to state 36
+    RETURN  shift, and go to state 37
+    LFBR    shift, and go to state 13
+
+    block  go to state 39
+    stmt   go to state 113
+    loc    go to state 41
+
+
+State 96
+
+   61 factor: LPBR bool RPBR .
+
+    $default  reduce using rule 61 (factor)
+
+
+State 97
+
+   23 stmt: loc ASSGN bool SCOL .
+
+    $default  reduce using rule 23 (stmt)
+
+
+State 98
+
+   37 loc: loc LSBR bool RSBR .
+
+    $default  reduce using rule 37 (loc)
+
+
+State 99
+
+   32 arglist: arglist COMMA arg .
+
+    $default  reduce using rule 32 (arglist)
+
+
+State 100
+
+   40 bool: bool OR join .
+   42 join: join . AND equality
+
+    AND  shift, and go to state 84
+
+    $default  reduce using rule 40 (bool)
+
+
+State 101
+
+   24 stmt: IF LPBR bool RPBR stmt .
+   25     | IF LPBR bool RPBR stmt . ELSE stmt
+
+    ELSE  shift, and go to state 114
+
+    $default  reduce using rule 24 (stmt)
+
+
+State 102
+
+   42 join: join AND equality .
+   44 equality: equality . EQL rel
+   45         | equality . NEQ rel
+
+    EQL  shift, and go to state 85
+    NEQ  shift, and go to state 86
+
+    $default  reduce using rule 42 (join)
+
+
+State 103
+
+   44 equality: equality EQL rel .
+
+    $default  reduce using rule 44 (equality)
+
+
+State 104
+
+   45 equality: equality NEQ rel .
+
+    $default  reduce using rule 45 (equality)
+
+
+State 105
+
+   52 expr: expr PLUS term .
+   55 term: term . MUL unary
+   56     | term . DIV unary
+
+    MUL  shift, and go to state 93
+    DIV  shift, and go to state 94
+
+    $default  reduce using rule 52 (expr)
+
+
+State 106
+
+   53 expr: expr MINUS term .
+   55 term: term . MUL unary
+   56     | term . DIV unary
+
+    MUL  shift, and go to state 93
+    DIV  shift, and go to state 94
+
+    $default  reduce using rule 53 (expr)
+
+
+State 107
+
+   47 rel: expr LES expr .
+   52 expr: expr . PLUS term
+   53     | expr . MINUS term
+
+    PLUS   shift, and go to state 87
+    MINUS  shift, and go to state 88
+
+    $default  reduce using rule 47 (rel)
+
+
+State 108
+
+   48 rel: expr LEQ expr .
+   52 expr: expr . PLUS term
+   53     | expr . MINUS term
+
+    PLUS   shift, and go to state 87
+    MINUS  shift, and go to state 88
+
+    $default  reduce using rule 48 (rel)
+
+
+State 109
+
+   50 rel: expr GRE expr .
+   52 expr: expr . PLUS term
+   53     | expr . MINUS term
+
+    PLUS   shift, and go to state 87
+    MINUS  shift, and go to state 88
+
+    $default  reduce using rule 50 (rel)
+
+
+State 110
+
+   49 rel: expr GEQ expr .
+   52 expr: expr . PLUS term
+   53     | expr . MINUS term
+
+    PLUS   shift, and go to state 87
+    MINUS  shift, and go to state 88
+
+    $default  reduce using rule 49 (rel)
+
+
+State 111
+
+   55 term: term MUL unary .
+
+    $default  reduce using rule 55 (term)
+
+
+State 112
+
+   56 term: term DIV unary .
+
+    $default  reduce using rule 56 (term)
+
+
+State 113
+
+   26 stmt: LOOP LPBR bool RPBR stmt .
+
+    $default  reduce using rule 26 (stmt)
+
+
+State 114
+
+   25 stmt: IF LPBR bool RPBR stmt ELSE . stmt
+
+    ID      shift, and go to state 33
+    IF      shift, and go to state 34
+    LOOP    shift, and go to state 35
+    BREAK   shift, and go to state 36
+    RETURN  shift, and go to state 37
+    LFBR    shift, and go to state 13
+
+    block  go to state 39
+    stmt   go to state 115
+    loc    go to state 41
+
+
+State 115
+
+   25 stmt: IF LPBR bool RPBR stmt ELSE stmt .
+
+    $default  reduce using rule 25 (stmt)

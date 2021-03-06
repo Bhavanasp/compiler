@@ -1,12 +1,15 @@
 float x;
 
-float func(int a, int b){
-	x = a+b;
+float func(float a,float b){
+	float c;
+	c = x+a+b;
+	return c;
 }
 
 init{
 	int x;
 	int y;
+	int k[200];
 	if(x>y){
 		float x;
 		if(x==1){
@@ -16,5 +19,5 @@ init{
 	}
 	x = 100;
 	y = 200;
-	func(x,y);
+	k[20] = func(x,y);
 }

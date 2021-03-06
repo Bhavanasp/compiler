@@ -14,6 +14,8 @@
 
 
 #include <iostream>
+#include <string>
+#include "symbol_table.hpp"
 using namespace std;
 
 class Node{
@@ -32,4 +34,15 @@ class Node{
 			this->size = size;
 			this->val = val;
 		};
+
+		void print(){
+			cout<<"\n------------------------------"<<endl;
+			if(ntype!="") cout<<ntype<<" ";
+			if(type!="") cout<<type<<" ";
+			if(size!="") cout<<size<<" ";
+			if(op!="") cout<<op<<" ";
+			if(val!="") cout<<val<<" ";
+			if(offset!="") cout<<offset<<" ";
+			cout<<"\n------------------------------"<<endl;
+		}
 };
