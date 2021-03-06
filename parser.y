@@ -1,29 +1,42 @@
 %{
-
 	#include <iostream>
 	#include <string>
 	#include <stack>
 	#include "symbol_table.hpp"
+	#include "ast_nodes.hpp"
 
 	using namespace std;
 
-	extern FILE * yyin;
+	extern FILE* yyin;
 
 	int yylex();
 	int yyerror(string s);
 	
-	stack <Env *> symref;
-	Env *top = new Env(NULL);
-	attr *a;
+	stack <Env*> symref;
+	Env* top = new Env(NULL);
+	attr* a;
+
+	struct ast_node{
+		Node *node;
+		struct ast_node* left;
+		struct ast_node* right;
+		ast_node(struct ast_node* vleft, struct ast_node* vright){
+			left = vleft;
+			right = vright;
+		}
+	};
+
+	typedef struct ast_node node;
 %}
 
 %union {
 	int ival;
 	float fval; 
 	char text[20];
+	struct ast_node* snode;
 }
 
-%nonassoc NO_ELSE
+%nonassoc NOELSE
 %nonassoc ELSE
 
 %token INIT
@@ -49,21 +62,33 @@
 %type <text> INT
 %type <text> FLOAT
 %type <ival> INTCONST
+%type <ival> FLOATCONST
+%type <snode> INIT init stmts block bool loc factor funcdecl globaldecl globaldecls vardecl vardecls start program 
 
 %%
 
-start		:	program	{cout<<endl;};
+start		:	program 
+			
+			{$$ = $1;};
 
-program		:	globaldecls init;
+program		:	globaldecls init
+			
+//			{$$ = new node($1,$2);}
+;
 
 globaldecls	:	globaldecls globaldecl
-			|;
+//			{$$ = new node($1,$2);}
+			|//{$$ = NULL;}
+;
 
 globaldecl	:	vardecl
-			|funcdecl;
+			{$$ = $1;}
+			|funcdecl
+			{$$ = $1;};
 
 vardecls	:	vardecls vardecl
-			|;
+			{$$ = NULL;}
+			|{$$ = NULL;};
 
 vardecl		:	type ID SCOL
 			{a = new attr();
@@ -80,7 +105,8 @@ vardecl		:	type ID SCOL
 			top->put($2, a);};
 
 funcdecl	:	type ID LPBR params RPBR block
-			{a = new attr();
+			{$$ = $6;
+			a = new attr();
 			string s($1);
 			a->type = s;
 			top->put($2, a);};
@@ -91,6 +117,9 @@ block		:	LFBR
 			cout<<"{";}
 			vardecls
 			stmts
+			
+//			{$$ = $3}
+			
 			RFBR
 			{top = symref.top();
 			symref.pop();
@@ -112,10 +141,12 @@ param		:	type ID
 			|type ID LSBR RSBR;
 
 stmts		:	stmts stmt
-			|;
+//			{$$ = new node($1, $2);}
+			|//{$$ = NULL}
+;
 
 stmt		:	loc ASSGN bool SCOL
-			|IF LPBR bool RPBR stmt %prec NO_ELSE
+			|IF LPBR bool RPBR stmt %prec NOELSE
 			|IF LPBR bool RPBR stmt ELSE stmt
 			|LOOP LPBR bool RPBR stmt
 			|ID LPBR args RPBR SCOL			
@@ -151,26 +182,53 @@ equality	:	equality EQL rel
 			|rel;
 
 rel		:	expr LES expr
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "lessthan"}
 			|expr LEQ expr
 			|expr GEQ expr
 			|expr GRE expr
 			|expr;
 
 expr		:	expr PLUS term
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "add";}
 			|expr MINUS term
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "subtract";}
 			|term;
 
 term		:	term MUL unary
+			{$$ = new node($1,$2);
+			 $$->op = "*";
+			 $$->node->ntype = "multiply";}
 			|term DIV unary
-			|unary;
+			{$$ = new node($1,$2);
+			 $$->op = "/";
+			 $$->node->ntype = "divide";}
+			|unary
+			{$$ = $1};
 
 unary		:	NOT unary
-			|MINUS unary|factor;
+			{$$ = $2;
+			 $$->op = "!";}
+			|MINUS unary
+			{$$ = $2;
+			 $$->op = "-";}
+			|factor
+			{$$ = $1;}
+			;
 
 factor		:	LPBR bool RPBR
+			{$$ = $2;}
 			|loc
+			{$$ = $1;}
 			|INTCONST
+			{$$ = new node(NULL, NULL);
+			$$->node = new node();
+			$$->node->constNode("literal","intconst", "4", to_string($1));}
 			|FLOATCONST
+			{$$ = new node(NULL, NULL);
+			$$->node->constNode("literal","floatconst", "4", to_string($1));}
 			;
 
 // block
