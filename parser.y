@@ -146,6 +146,7 @@ stmts		:	stmts stmt
 ;
 
 stmt		:	loc ASSGN bool SCOL
+			
 			|IF LPBR bool RPBR stmt %prec NOELSE
 			|IF LPBR bool RPBR stmt ELSE stmt
 			|LOOP LPBR bool RPBR stmt
@@ -156,54 +157,92 @@ stmt		:	loc ASSGN bool SCOL
 			|block;
 
 args		:	arglist
-			|;
+			{$$ = $1;}
+			|{$$ = $1;};
 
-arglist		:	arglist COMMA arg
-			|arg;
+arglist		:	arglist COMMA arg {$$ = new Node($1,$3);}
+			|arg {$$ = $1;};
 
-arg		:	factor;
+arg		:	factor {$$ = $1;};
 
 type		:	INT|FLOAT;
 
 loc		:	loc LSBR bool RSBR
+			{$$ = new node(NULL,NULL);
+			 $$->node->ntype = "location";}
 			|ID
-			{a = top->get($1);
-			cout<<$1<<":"<<a->type<<endl;}
-;
+			{$$ = new node(NULL,NULL);
+			 $$->node->ntype = "location";
+			 $$->node->atr = top->get($1);
+			 cout<<$1<<":"<<$$->node->attr->type<<endl;}
+			;
 
 bool		:	bool OR join
-			|join;
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "bool";
+			 $$->node->op = "||";}
+			|join
+			{$$ = $1;}
+			;
 
 join		:	join AND equality
-			|equality;
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "join";
+			 $$->node->op = "&&";}
+			|equality
+			{$$ = $1;}
+			;
 
 equality	:	equality EQL rel
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "equality";
+			 $$->node->op = "==";}
 			|equality NEQ rel
-			|rel;
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "equality";
+			 $$->node->op = "!=";}
+			|rel
+			{$$ = $1;};
 
 rel		:	expr LES expr
 			{$$ = new node($1,$2);
-			 $$->node->ntype = "lessthan"}
+			 $$->node->ntype = "rel";
+			 $$->node->op = "<";}
 			|expr LEQ expr
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "rel";
+			 $$->node->op = "<=";}
 			|expr GEQ expr
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "rel";
+			 $$->node->op = ">=";}
 			|expr GRE expr
-			|expr;
+			{$$ = new node($1,$2);
+			 $$->node->ntype = "rel";
+			 $$->node->op = ">";}
+			|expr
+			{$$ = $1;}
+			;
 
 expr		:	expr PLUS term
 			{$$ = new node($1,$2);
-			 $$->node->ntype = "add";}
+			 $$->node->ntype = "add";
+			 $$->node->op = "+";}
 			|expr MINUS term
 			{$$ = new node($1,$2);
-			 $$->node->ntype = "subtract";}
-			|term;
+			 $$->node->ntype = "subtract";
+			 $$->node->op = "-";}
+			|term
+			{$$ = $1;}
+			;
 
 term		:	term MUL unary
 			{$$ = new node($1,$2);
-			 $$->op = "*";
+			 $$->node->op = "*";
 			 $$->node->ntype = "multiply";}
 			|term DIV unary
 			{$$ = new node($1,$2);
-			 $$->op = "/";
+			 $$->node->op = "/";
 			 $$->node->ntype = "divide";}
 			|unary
 			{$$ = $1};
@@ -224,8 +263,8 @@ factor		:	LPBR bool RPBR
 			{$$ = $1;}
 			|INTCONST
 			{$$ = new node(NULL, NULL);
-			$$->node = new node();
-			$$->node->constNode("literal","intconst", "4", to_string($1));}
+			 $$->node = new node();
+			 $$->node->constNode("literal","intconst", "4", to_string($1));}
 			|FLOATCONST
 			{$$ = new node(NULL, NULL);
 			$$->node->constNode("literal","floatconst", "4", to_string($1));}

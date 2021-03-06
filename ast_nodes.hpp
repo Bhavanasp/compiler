@@ -16,21 +16,18 @@
 #include <iostream>
 using namespace std;
 
-
-class SymTabNode{
-	public:
-		int* a;
-};
-
 class Node{
 	public:
-		string ntype;
-		string type;
-		string size;
-		string op;
-		string val;
+		string ntype = "";
+		string type = "";
+		string size = "";
+		string op = "";
+		string val = "";
+		string offset = "";
+		attr* atr = NULL;
 
 		void constNode(string ntype, string type, string size, string val){
+			this->ntype = ntype;
 			this->type = type;
 			this->size = size;
 			this->val = val;
