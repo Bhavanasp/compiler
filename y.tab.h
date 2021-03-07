@@ -50,37 +50,39 @@ extern int yydebug;
     INIT = 260,
     INT = 261,
     FLOAT = 262,
-    VOID = 263,
-    INTCONST = 264,
-    FLOATCONST = 265,
-    ID = 266,
-    COMMA = 267,
-    SCOL = 268,
-    IF = 269,
-    LOOP = 270,
-    BREAK = 271,
-    RETURN = 272,
-    ASSGN = 273,
-    PLUS = 274,
-    MINUS = 275,
-    MUL = 276,
-    DIV = 277,
-    LES = 278,
-    LEQ = 279,
-    GRE = 280,
-    GEQ = 281,
-    EQL = 282,
-    NEQ = 283,
-    AND = 284,
-    OR = 285,
-    NOT = 286,
-    LSBR = 287,
-    RSBR = 288,
-    LPBR = 289,
-    RPBR = 290,
-    LFBR = 291,
-    RFBR = 292,
-    ERR = 293
+    CHAR = 263,
+    VOID = 264,
+    INTCONST = 265,
+    FLOATCONST = 266,
+    CHARCONST = 267,
+    ID = 268,
+    COMMA = 269,
+    SCOL = 270,
+    IF = 271,
+    LOOP = 272,
+    BREAK = 273,
+    RETURN = 274,
+    ASSGN = 275,
+    PLUS = 276,
+    MINUS = 277,
+    MUL = 278,
+    DIV = 279,
+    LES = 280,
+    LEQ = 281,
+    GRE = 282,
+    GEQ = 283,
+    EQL = 284,
+    NEQ = 285,
+    AND = 286,
+    OR = 287,
+    NOT = 288,
+    LSBR = 289,
+    RSBR = 290,
+    LPBR = 291,
+    RPBR = 292,
+    LFBR = 293,
+    RFBR = 294,
+    ERR = 295
   };
 #endif
 /* Tokens.  */
@@ -89,51 +91,53 @@ extern int yydebug;
 #define INIT 260
 #define INT 261
 #define FLOAT 262
-#define VOID 263
-#define INTCONST 264
-#define FLOATCONST 265
-#define ID 266
-#define COMMA 267
-#define SCOL 268
-#define IF 269
-#define LOOP 270
-#define BREAK 271
-#define RETURN 272
-#define ASSGN 273
-#define PLUS 274
-#define MINUS 275
-#define MUL 276
-#define DIV 277
-#define LES 278
-#define LEQ 279
-#define GRE 280
-#define GEQ 281
-#define EQL 282
-#define NEQ 283
-#define AND 284
-#define OR 285
-#define NOT 286
-#define LSBR 287
-#define RSBR 288
-#define LPBR 289
-#define RPBR 290
-#define LFBR 291
-#define RFBR 292
-#define ERR 293
+#define CHAR 263
+#define VOID 264
+#define INTCONST 265
+#define FLOATCONST 266
+#define CHARCONST 267
+#define ID 268
+#define COMMA 269
+#define SCOL 270
+#define IF 271
+#define LOOP 272
+#define BREAK 273
+#define RETURN 274
+#define ASSGN 275
+#define PLUS 276
+#define MINUS 277
+#define MUL 278
+#define DIV 279
+#define LES 280
+#define LEQ 281
+#define GRE 282
+#define GEQ 283
+#define EQL 284
+#define NEQ 285
+#define AND 286
+#define OR 287
+#define NOT 288
+#define LSBR 289
+#define RSBR 290
+#define LPBR 291
+#define RPBR 292
+#define LFBR 293
+#define RFBR 294
+#define ERR 295
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 40 "parser.y" /* yacc.c:1909  */
+#line 43 "parser.y" /* yacc.c:1909  */
 
 	int ival;
 	float fval; 
 	char text[20];
 	struct ast_node* snode;
 
-#line 137 "y.tab.h" /* yacc.c:1909  */
+#line 141 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -36,13 +36,13 @@ class Node{
 		};
 
 		void print(){
-			cout<<"\n------------------------------"<<endl;
-			if(ntype!="") cout<<ntype<<" ";
-			if(type!="") cout<<type<<" ";
-			if(size!="") cout<<size<<" ";
-			if(op!="") cout<<op<<" ";
-			if(val!="") cout<<val<<" ";
-			if(offset!="") cout<<offset<<" ";
-			cout<<"\n------------------------------"<<endl;
+			cout<<"\n----------------------------------"<<endl;
+			if(ntype!="") cout<<"node_type: "<<ntype<<endl;
+			if(type!="") cout<<"type: "<<type<<endl;
+			if(size!="") cout<<"size: "<<size<<endl;
+			if(op!="") cout<<"operator: "<<op<<endl;
+			if(val!="") cout<<"value: "<<val<<endl;
+			if(offset!="") cout<<"offset: "<<offset;
+			cout<<"----------------------------------"<<endl;
 		}
 };

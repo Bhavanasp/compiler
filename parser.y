@@ -10,12 +10,13 @@
 
 	int yylex();
 	int yyerror(string s);
+	int size(string s);
 
 	//stack to keep track of the hierarchical symbol table	
-	stack <Env*> symref;
+	stack <Scope*> symref;
 	
 	//global symbol table
-	Env* top = new Env(NULL);
+	Scope* top = new Scope(NULL);
 
 	//attributes
 	attr* a;
@@ -35,6 +36,8 @@
 	typedef struct ast_node node;
 
 	void preorder(node*);
+
+	int npar;
 %}
 
 %union {
@@ -48,8 +51,8 @@
 %nonassoc ELSE
 
 %token INIT
-%token INT FLOAT VOID
-%token INTCONST FLOATCONST
+%token INT FLOAT CHAR VOID
+%token INTCONST FLOATCONST CHARCONST
 %token ID
 %token COMMA SCOL
 %token IF ELSE
@@ -66,9 +69,10 @@
 %token ERR
 
 %type <text> type
-%type <text> ID INT FLOAT
+%type <text> ID INT FLOAT CHAR
 %type <ival> INTCONST
-%type <ival> FLOATCONST
+%type <fval> FLOATCONST
+%type <text> CHARCONST
 %type <snode> start program globaldecls globaldecl vardecls vardecl 
 %type <snode> funcdecl block init params paramlist param stmts stmt
 %type <snode> args arglist arg loc bool join equality rel expr
@@ -78,7 +82,11 @@
 
 start		:	program 
 			
-			{$$ = $1; preorder($$);};
+			{$$ = $1; 
+		       	 cout<<"\n\n----------------------------------"<<endl;
+			 cout<<" SYNTAX-TREE TRAVERSAL (PREORDER) "<<endl;
+			 cout<<"----------------------------------"<<endl;
+			 preorder($$);};
 
 program		:	globaldecls init
 			
@@ -113,30 +121,32 @@ vardecls	:	vardecls vardecl
 vardecl		:	type ID SCOL
 
 			{$$ = NULL;
-			 a = new attr("var",$1,"","4","");
-			 top->put($2, a);}
+			 a = new attr("var",$1,"",to_string(size($1)),"");
+			 top->put($2, a);
+			 cout<<"\tinstalled "<<$2<<" : ";a->print();cout<<endl;}
 
 			|
 
 			type ID LSBR INTCONST RSBR SCOL
 
 			{$$ = NULL;
-			 a = new attr("array",$1,"",to_string(4*$4),"");
-			 top->put($2, a);};
+			 a = new attr("array",$1,"",to_string(size($1)*$4),"");
+			 top->put($2, a);
+			 cout<<"\tinstalled "<<$2<<" : ";a->print();cout<<endl;};
 
-funcdecl	:	type ID LPBR params RPBR block
+funcdecl	:	type ID LPBR {npar = 0;cout<<"{\n";} params RPBR block
 
-			{$$ = $6;
+			{$$ = $7;
 			 a = new attr("func","","","","");
 			 a->ret_type = $1;
-			 a->number_of_args = "2";			
-			 top->put($2, a);};
+			 a->number_of_args = to_string(npar);			
+			 top->put($2, a);
+			 cout<<"\tinstalled "<<$2<<" : ";a->print();cout<<endl;};
 
 block		:	LFBR
 
 			{symref.push(top);
-			 top = new Env(top);
-			 cout<<"{\n";}
+			 top = new Scope(top);}
 
 			vardecls
 			stmts
@@ -148,9 +158,9 @@ block		:	LFBR
 			 symref.pop();
 			 cout<<"}\n";};
 
-init		:	INIT block
+init		:	{cout<<"{\n";} INIT block
 
-			{$$ = $2;};
+			{$$ = $3;};
 
 params		:	paramlist
 
@@ -173,9 +183,11 @@ paramlist	:	paramlist COMMA param
 param		:	type ID
 
 			{$$ = new node(new Node(),NULL,NULL);
-			 a = new attr("var",$1,"","4","");
+			 a = new attr("var",$1,"",to_string(size($1)),"");
 			 top->put($2, a);
-			 $$->node->atr = a;}
+			 $$->node->atr = a;
+			 cout<<"\tinstalled "<<$2<<" : ";a->print();cout<<endl;
+			 npar++;}
 
 			|
 
@@ -184,7 +196,9 @@ param		:	type ID
 			{$$ = new node(new Node(),NULL,NULL);
 			 a = new attr("array",$1,"","","");
 			 top->put($2, a);
-			 $$->node->atr = a;};
+			 $$->node->atr = a;
+			 cout<<"\tinstalled "<<$2<<" : ";a->print();cout<<endl;
+			 npar++;};
 
 stmts		:	stmts stmt
 
@@ -224,9 +238,9 @@ stmt		:	loc ASSGN bool SCOL
 			{$$ = new node(new Node(),$2,NULL);
 			 $$->node->ntype = "return";}
 
-			|block
+			|{cout<<"{\n";} block
 
-			{$$ = $1;};
+			{$$ = $2;};
 
 args		:	arglist
 
@@ -248,7 +262,7 @@ arg		:	factor
 
 			{$$ = $1;};
 
-type		:	INT | FLOAT;
+type		:	INT | FLOAT | CHAR;
 
 loc		:	loc LSBR bool RSBR
 
@@ -260,14 +274,14 @@ loc		:	loc LSBR bool RSBR
 			{$$ = new node(new Node(),NULL,NULL);
 			 $$->node->ntype = "location";
 			 $$->node->atr = top->get($1);
-			  cout<<"\t"<<$1<<" : ";$$->node->atr->print();cout<<endl;}
+			  cout<<"\taccessed "<<$1<<" : ";$$->node->atr->print();cout<<endl;}
 
 			|ID LPBR args RPBR
 			
 			{$$ = new node(new Node(),NULL,NULL);
 			 $$->node->ntype = "funcall";
 			 $$->node->atr = top->get($1);
-			 cout<<"\t"<<$1<<" : ";$$->node->atr->print();cout<<endl;}
+			 cout<<"\taccessed "<<$1<<" : ";$$->node->atr->print();cout<<endl;}
 
 			;
 
@@ -393,12 +407,30 @@ factor		:	LPBR bool RPBR
 			|INTCONST
 
 			{$$ = new node(new Node(),NULL,NULL);
-			 $$->node->constNode("literal","intconst", "4", to_string($1));}
+			 $$->node->constNode("literal","intconst", "4", to_string($1));
+			 a = new attr("const",to_string($1),"","4","");
+			 top->put(to_string($1), a);
+			 $$->node->atr = a;
+			 cout<<"\tinstalled "<<$1<<" : ";a->print();cout<<endl;}
 
 			|FLOATCONST
 
 			{$$ = new node(new Node(),NULL,NULL);
-			 $$->node->constNode("literal","floatconst", "4", to_string($1));};
+			 $$->node->constNode("literal","floatconst", "4", to_string($1));
+			 a = new attr("const",to_string($1),"","4","");
+			 top->put(to_string($1), a);
+			 $$->node->atr = a;
+			 cout<<"\tinstalled "<<$1<<" : ";a->print();cout<<endl;}
+
+			|CHARCONST
+
+			{$$ = new node(new Node(),NULL,NULL);
+			 $$->node->constNode("literal","charconst", "1", $1);
+			 a = new attr("const",$1,"","1","");
+			 top->put($1, a);
+			 $$->node->atr = a;
+			 cout<<"\tinstalled "<<$1<<" : ";a->print();cout<<endl;};
+			
 
 %%
 
@@ -410,6 +442,9 @@ int main(int argc, char *argv[])
        		exit(0);
 	}
 	yyin = fopen(argv[1], "r");
+	cout<<"\n\n-----------------------------------------------------------------"<<endl;
+	cout<<"    		WORKING OF THE SYMBOL-TABLE   			"<<endl;
+	cout<<"-----------------------------------------------------------------\n\n"<<endl;
 	yyparse();
 	return 0;
 }
@@ -417,6 +452,21 @@ int main(int argc, char *argv[])
 int yyerror(string s){
 	cout<<"Error: "<<s<<endl;
 	return 0;
+}
+
+int size(string s){
+	if(s=="int"){
+		return 4;
+	}
+	else if(s=="float"){
+		return 4;
+	}
+	else if(s=="char"){
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 void preorder(node* ptr){

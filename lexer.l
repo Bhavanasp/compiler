@@ -12,6 +12,7 @@ digits	{digit}+
 "init"				{return INIT;}
 "int"				{strcpy(yylval.text,yytext); return INT;}
 "float"				{strcpy(yylval.text,yytext); return FLOAT;}
+"char"				{strcpy(yylval.text,yytext); return CHAR;}
 "void"				{return VOID;}
 ","				{return COMMA;}
 ";"				{return SCOL;}
@@ -43,6 +44,7 @@ digits	{digit}+
 {alpha}({alpha}|{digit})*	{strcpy(yylval.text,yytext); return ID;}
 ("+"|"-")?{digits}		{yylval.ival = atoi(yytext); return INTCONST;}
 ("+"|"-")?{digits}"."{digits}	{yylval.fval = atof(yytext); return FLOATCONST;}
+"'"{alpha}"'"			{strcpy(yylval.text,yytext); return CHARCONST;}
 [ \t\n]				;
 "$"				{return 0;}
 .  				{return ERR;}
