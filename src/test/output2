@@ -1,0 +1,43 @@
+.data
+			.word	0 
+			str0: .asciiz	"\n"
+			str1: .asciiz	"Initial value of x: "
+			str2: .asciiz	"\n"
+			str3: .asciiz	"Enter a value for x: "
+			str4: .asciiz	"Current value of x: "
+			str5: .asciiz	"\n"
+.text
+.globl main
+
+main:
+       lui $8, 0x1001
+       li $v0, 4
+       la $a0, str0
+       syscall
+       li $v0, 4
+       la $a0, str1
+       syscall
+       lw $9, 0($8)
+       li $v0, 1
+       move $a0, $9
+       syscall
+       li $v0, 4
+       la $a0, str2
+       syscall
+       li $v0, 4
+       la $a0, str3
+       syscall
+       li $v0, 5
+       syscall
+       move $9, $v0
+       li $v0, 4
+       la $a0, str4
+       syscall
+       li $v0, 1
+       move $a0, $9
+       syscall
+       li $v0, 4
+       la $a0, str5
+       syscall
+       sw $9, 0($8)
+       jr $ra

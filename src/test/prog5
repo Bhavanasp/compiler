@@ -1,0 +1,28 @@
+init {
+	
+	int i;
+	int j;
+
+	i = 0;
+
+	# this program shows function of loops and also nesting of various control flow statements #
+
+	print("\n");
+
+	loop(i<10){
+		j = 0;
+		loop(j<10){
+			if(i>j){
+				print("1 ");
+			}
+			else{
+				print("0 ");
+			}
+			j = j+1;
+		}
+		print("\n");
+		i = i+1;
+	}
+	print("\n");
+
+}

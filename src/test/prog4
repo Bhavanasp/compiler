@@ -1,0 +1,21 @@
+init {
+
+	# this code demonstrates the functioning of a simple if-else and if statements #
+
+	int a;
+	a = 2;
+
+	print("\n");
+
+	if(!((a==-1)||(a==1))){
+		print("abs(a) is not 1\n");
+	}
+	else{
+		print("abs(a) is 1\n");
+	}
+
+	if(a!=0){
+		print("a is non zero\n");
+	}
+
+}

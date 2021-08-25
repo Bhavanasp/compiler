@@ -1,0 +1,24 @@
+init {
+
+	# Everything should be within the init block #
+
+	# This code demonstrates the i/o #
+
+	int x;
+
+	# Print the current value of x, since it is not assigned any value x is set to 0 by default #
+	# A print statement can take only one argument at once and it can either be an identifier or a string #
+
+	print("\n");
+	print("Initial value of x: ");
+	print(x);
+	print("\n");
+	print("Enter a value for x: ");
+
+	# get a user input for x #
+
+	get(x);
+	print("Current value of x: ");
+	print(x);
+	print("\n");
+}

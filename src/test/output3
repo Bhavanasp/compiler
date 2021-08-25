@@ -1,0 +1,25 @@
+.data
+			.word	0 0 1 2 0 
+			str0: .asciiz	"\na is not eaqual to b\n"
+.text
+.globl main
+
+main:
+       lui $8, 0x1001
+       lw $9, 8($8)
+       move $10, $9
+       lw $11, 12($8)
+       move $12, $11
+       bne $10, $12, L1
+       j L2
+L1:
+       li $v0, 4
+       la $a0, str0
+       syscall
+L2:
+       sw $9, 8($8)
+       sw $10, 0($8)
+       sw $11, 12($8)
+       sw $12, 4($8)
+       sw $13, 16($8)
+       jr $ra

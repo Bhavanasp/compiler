@@ -1,0 +1,52 @@
+.data
+			.word	0 2 1 0 0 1 0 0 0 
+			str0: .asciiz	"\n"
+			str1: .asciiz	"abs(a) is not 1\n"
+			str2: .asciiz	"abs(a) is 1\n"
+			str3: .asciiz	"a is non zero\n"
+.text
+.globl main
+
+main:
+       lui $8, 0x1001
+       lw $9, 4($8)
+       move $10, $9
+       li $v0, 4
+       la $a0, str0
+       syscall
+       lw $11, 8($8)
+       sub $12, $0, $11
+       lw $13, 20($8)
+       beq $10, $12, L2
+       j L3
+L3:
+       beq $10, $13, L2
+       j L1
+L1:
+       li $v0, 4
+       la $a0, str1
+       syscall
+       j L4
+L2:
+       li $v0, 4
+       la $a0, str2
+       syscall
+L4:
+       lw $16, 28($8)
+       bne $10, $16, L5
+       j L6
+L5:
+       li $v0, 4
+       la $a0, str3
+       syscall
+L6:
+       sw $9, 4($8)
+       sw $10, 0($8)
+       sw $11, 8($8)
+       sw $12, 12($8)
+       sw $13, 20($8)
+       sw $14, 16($8)
+       sw $15, 24($8)
+       sw $16, 28($8)
+       sw $17, 32($8)
+       jr $ra

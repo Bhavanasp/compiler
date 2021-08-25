@@ -1,0 +1,16 @@
+init {
+
+	# A simple program that demonstartes the working of expressions #
+
+	int a; int b; int c; int d;
+
+	b = 2; c = 10; d = 4;
+
+	a = b * (c + d) + 6;	
+
+	print("\n");
+	print("Value of a: ");
+	print(a);
+	print("\n");
+
+}

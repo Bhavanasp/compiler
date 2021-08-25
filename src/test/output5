@@ -1,0 +1,74 @@
+.data
+			.word	0 0 0 10 0 0 10 0 0 1 0 1 0 
+			str0: .asciiz	"\n"
+			str1: .asciiz	"1 "
+			str2: .asciiz	"0 "
+			str3: .asciiz	"\n"
+			str4: .asciiz	"\n"
+.text
+.globl main
+
+main:
+       lui $8, 0x1001
+       lw $9, 8($8)
+       move $10, $9
+       li $v0, 4
+       la $a0, str0
+       syscall
+L1:
+       lw $11, 12($8)
+       slt $12, $10, $11
+       bne $12, $0, L2
+       j L3
+L2:
+       lw $13, 20($8)
+       move $14, $13
+L4:
+       lw $15, 24($8)
+       slt $16, $14, $15
+       bne $16, $0, L5
+       j L6
+L5:
+       slt $17, $14, $10
+       bne $17, $0, L7
+       j L8
+L7:
+       li $v0, 4
+       la $a0, str1
+       syscall
+       j L9
+L8:
+       li $v0, 4
+       la $a0, str2
+       syscall
+L9:
+       lw $18, 36($8)
+       add $19, $14, $18
+       move $14, $19
+       j L4
+L6:
+       li $v0, 4
+       la $a0, str3
+       syscall
+       lw $20, 44($8)
+       add $21, $10, $20
+       move $10, $21
+       j L1
+L3:
+       li $v0, 4
+       la $a0, str4
+       syscall
+       sw $9, 8($8)
+       sw $10, 0($8)
+       sw $11, 12($8)
+       sw $12, 16($8)
+       sw $13, 20($8)
+       sw $14, 4($8)
+       sw $15, 24($8)
+       sw $16, 28($8)
+       sw $17, 32($8)
+       sw $18, 36($8)
+       sw $19, 40($8)
+       sw $20, 44($8)
+       sw $21, 48($8)
+       jr $ra

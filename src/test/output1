@@ -1,0 +1,45 @@
+.data
+			.word	0 0 0 0 2 10 4 0 0 6 0 
+			str0: .asciiz	"\n"
+			str1: .asciiz	"Value of a: "
+			str2: .asciiz	"\n"
+.text
+.globl main
+
+main:
+       lui $8, 0x1001
+       lw $9, 16($8)
+       move $10, $9
+       lw $11, 20($8)
+       move $12, $11
+       lw $13, 24($8)
+       move $14, $13
+       add $15, $12, $14
+       mul $16, $10, $15
+       lw $17, 36($8)
+       add $18, $16, $17
+       move $19, $18
+       li $v0, 4
+       la $a0, str0
+       syscall
+       li $v0, 4
+       la $a0, str1
+       syscall
+       li $v0, 1
+       move $a0, $19
+       syscall
+       li $v0, 4
+       la $a0, str2
+       syscall
+       sw $9, 16($8)
+       sw $10, 4($8)
+       sw $11, 20($8)
+       sw $12, 8($8)
+       sw $13, 24($8)
+       sw $14, 12($8)
+       sw $15, 28($8)
+       sw $16, 32($8)
+       sw $17, 36($8)
+       sw $18, 40($8)
+       sw $19, 0($8)
+       jr $ra

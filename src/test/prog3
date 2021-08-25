@@ -1,0 +1,15 @@
+init{
+
+	int a;
+	int b;
+
+	a = 1;
+	b = 2;
+
+	# simple if statement #
+
+	if(a!=b){
+		print("\na is not eaqual to b\n");
+	}
+
+}
